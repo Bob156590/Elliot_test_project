@@ -27,6 +27,7 @@ public class Enemy : MonoBehaviour
     public bool canAttack;
     public int enemyHP;
     public float distance;
+    bool dead = false;
     private GameObject player;
     EnemiesManager enemiesManager;
     public float X;
@@ -45,7 +46,7 @@ public class Enemy : MonoBehaviour
         bAST = 1;
         attackModifier = 1;
         enemyHP = Random.Range(2, 10);
-        id = enemiesManager.enemies.Count - 1;
+        id = enemiesManager.enemies.Count + 1;
         canMove = false;
         isMoving = false;
         hasMoved = true;
@@ -54,11 +55,14 @@ public class Enemy : MonoBehaviour
     public void Update(){
         if(enemyHP <= 0){
             gameObject.SetActive(false);
-            Destroy(gameObject);
+            dead = true;
         }
         distance = Vector2.Distance(transform.position, player.transform.position);
         if(gameManager.gameState == GameState.PlayerTurn && Input.GetKeyDown(KeyCode.Space) && distance == 1f){
             Takedamage(5);
+        }
+        if(dead){
+            hasMoved = true;
         }
     }
     
@@ -68,7 +72,7 @@ public class Enemy : MonoBehaviour
         X = diffPos.x;
         Y = diffPos.y;
         //spTurn ++ ;
-        if(Mathf.Abs(diffPos.x) + Mathf.Abs(diffPos.y) > 1 /*&& speed == spTurn*/) 
+        if(Mathf.Abs(diffPos.x) + Mathf.Abs(diffPos.y) > 1 && !dead /*&& speed == spTurn*/) 
         {
             hasMoved = false;
             canMove = true;
@@ -113,7 +117,7 @@ public class Enemy : MonoBehaviour
         Vector3 diffPos = pos - playerPos;
         X = diffPos.x;
         Y = diffPos.y;
-        if(Mathf.Abs(diffPos.x) + Mathf.Abs(diffPos.y) == 1){
+        if(Mathf.Abs(diffPos.x) + Mathf.Abs(diffPos.y) == 1 && !dead){
             canAttack = true;
             hasMoved = false;
             attackModifier /= playerScript.playerHP/100;

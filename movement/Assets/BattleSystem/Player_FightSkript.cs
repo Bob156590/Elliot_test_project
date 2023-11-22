@@ -1,3 +1,4 @@
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -7,9 +8,11 @@ public class Player_FightSkript : MonoBehaviour
     public float distance;
     HealthBar healthBar;
     GameManager gameManager;
+    DeathScreen deathScreen;
     // Start is called before the first frame update
     void Start()
     {
+        deathScreen = GameObject.FindGameObjectWithTag("DeathScreen").GetComponent<DeathScreen>();
         playerHP = 100;
         gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
         healthBar = GameObject.FindGameObjectWithTag("HealthBar").GetComponent<HealthBar>();
@@ -19,7 +22,7 @@ public class Player_FightSkript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(playerHP <= 0){
+        if(playerHP <= 0){ 
             SceneManager.LoadScene("GameOver");
         }
     }
