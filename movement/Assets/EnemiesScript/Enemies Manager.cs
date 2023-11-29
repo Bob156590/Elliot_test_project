@@ -47,9 +47,9 @@ public class EnemiesManager : MonoBehaviour
     {
         enemySpawn = Instantiate(prefab);
         //enemySpawn enemies[enemies.Count - 1];
-        enemySpawn.GetComponent<Enemy>().pos = new Vector3(x, y, 0);
+        enemySpawn.GetComponent<Enemy>().pos = new Vector3(x, y, -1);
         enemies.Add(enemySpawn.GetComponent<Enemy>());
-        enemySpawn.transform.position = new Vector3(x, y,0);
+        enemySpawn.transform.position = new Vector3(x, y,-1);
     }
 
     public void SetState()

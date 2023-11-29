@@ -20,6 +20,7 @@ public class Enemy : MonoBehaviour
     Player_FightSkript playerScript;
     public float dash;
     public Vector3 pos;
+    Vector3 lastPos;
     private int where;
     public bool canMove;
     public bool isMoving;
@@ -27,11 +28,11 @@ public class Enemy : MonoBehaviour
     public bool canAttack;
     public int enemyHP;
     public float distance;
-    bool dead = false;
     private GameObject player;
     EnemiesManager enemiesManager;
     public float X;
     public float Y;
+    bool dead;
     private void Start()
     {
         enemiesManager = GameObject.FindGameObjectWithTag("EnemiesManager").GetComponent<EnemiesManager>();
@@ -46,23 +47,22 @@ public class Enemy : MonoBehaviour
         bAST = 1;
         attackModifier = 1;
         enemyHP = Random.Range(2, 10);
-        id = enemiesManager.enemies.Count + 1;
+        id = enemiesManager.enemies.Count - 1;
         canMove = false;
         isMoving = false;
         hasMoved = true;
         canAttack = false;
+        dead = false;
     }
     public void Update(){
         if(enemyHP <= 0){
             gameObject.SetActive(false);
+            Destroy(gameObject);
             dead = true;
         }
         distance = Vector2.Distance(transform.position, player.transform.position);
         if(gameManager.gameState == GameState.PlayerTurn && Input.GetKeyDown(KeyCode.Space) && distance == 1f){
             Takedamage(5);
-        }
-        if(dead){
-            hasMoved = true;
         }
     }
     
@@ -72,7 +72,7 @@ public class Enemy : MonoBehaviour
         X = diffPos.x;
         Y = diffPos.y;
         //spTurn ++ ;
-        if(Mathf.Abs(diffPos.x) + Mathf.Abs(diffPos.y) > 1 && !dead /*&& speed == spTurn*/) 
+        if(Mathf.Abs(diffPos.x) + Mathf.Abs(diffPos.y) > 1 && !dead/*&& speed == spTurn*/) 
         {
             hasMoved = false;
             canMove = true;
@@ -85,7 +85,9 @@ public class Enemy : MonoBehaviour
             if(diffPos.x < 0) list.Add(3);
             where = list[Random.Range(0, list.Count)];//It just works
         }
-
+        else if(dead){
+            hasMoved = true;
+        }
     }
     public void Move()
     {
@@ -109,6 +111,7 @@ public class Enemy : MonoBehaviour
         {
             canMove = false;
             hasMoved = true;
+            lastPos = transform.position;
         }
         transform.position = pos;
     }
@@ -122,6 +125,9 @@ public class Enemy : MonoBehaviour
             hasMoved = false;
             attackModifier /= playerScript.playerHP/100;
         }
+        else if(dead){
+            hasMoved = true;
+        }
     }
     public void Takedamage(int dmg){
         enemyHP -= dmg;
@@ -131,6 +137,7 @@ public class Enemy : MonoBehaviour
         if(bAST == baseAttackSpeed || oppertunity){
             playerScript.Takedamage(baseAttack*Random.Range(attackModifier-0.1f, attackModifier+0.1f));
         }
+        canMove = false;
         hasMoved = true;
         canAttack = false;
     }

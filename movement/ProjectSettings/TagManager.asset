@@ -10,7 +10,6 @@ TagManager:
   - MovementControls
   - EnemiesManager
   - HealthBar
-  - DeathScreen
   layers:
   - Default
   - TransparentFX
